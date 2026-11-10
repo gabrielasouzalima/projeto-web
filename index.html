@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6fb">
+  <title>Kanban — seu espaço de trabalho</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <section id="auth-view" class="auth-view" aria-labelledby="auth-title" hidden>
+      <header class="auth-topbar">
+        <a class="brand" href="#" aria-label="Kanban, início">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span>kanban<span class="brand-dot">.</span></span>
+        </a>
+        <button id="auth-theme-toggle" class="icon-button" type="button" aria-label="Ativar tema escuro" title="Alternar tema">
+          <svg class="theme-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+          <svg class="theme-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg>
+        </button>
+      </header>
+      <div class="auth-card">
+        <span class="auth-icon" aria-hidden="true">✦</span>
+        <p class="eyebrow">CONTA NESTE NAVEGADOR</p>
+        <h1 id="auth-title">Entre na sua conta</h1>
+        <p id="auth-subtitle" class="board-subtitle">Acesse seu quadro salvo neste dispositivo.</p>
+        <form id="auth-form" novalidate>
+          <label id="name-field" class="form-field" for="auth-name" hidden>Nome
+            <input id="auth-name" name="name" type="text" maxlength="80" autocomplete="name" placeholder="Seu nome">
+          </label>
+          <label class="form-field" for="auth-email">E-mail
+            <input id="auth-email" name="email" type="email" maxlength="254" autocomplete="email" required placeholder="voce@exemplo.com">
+          </label>
+          <label class="form-field" for="auth-password">Senha
+            <span class="password-field">
+              <input id="auth-password" name="password" type="password" minlength="8" autocomplete="current-password" required placeholder="Mínimo de 8 caracteres">
+              <button class="password-toggle" type="button" data-password-toggle="auth-password" aria-label="Mostrar senha">Mostrar</button>
+            </span>
+          </label>
+          <p id="auth-error" class="auth-error" role="alert" aria-live="assertive"></p>
+          <button id="auth-submit" class="button button-primary auth-submit" type="submit">Entrar</button>
+        </form>
+        <p class="auth-switch"><span id="auth-switch-text">Ainda não tem uma conta?</span>
+          <button id="auth-switch-button" class="text-button" type="button">Criar conta</button>
+        </p>
+      </div>
+    </section>
+
+    <div id="board-view" hidden>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Kanban, início">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span>kanban<span class="brand-dot">.</span></span>
+      </a>
+      <div class="topbar-actions">
+        <label class="search-box">
+          <span class="sr-only">Buscar cartões</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <input id="search-input" type="search" placeholder="Buscar cartões..." autocomplete="off">
+          <kbd>⌘ K</kbd>
+        </label>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Ativar tema escuro" title="Alternar tema">
+          <svg class="theme-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+          <svg class="theme-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg>
+        </button>
+        <button id="export-button" class="button button-quiet" type="button" aria-label="Exportar quadro para JSON">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"></path></svg>
+          <span>Exportar</span>
+        </button>
+        <button id="import-button" class="button button-quiet" type="button" aria-label="Importar quadro de arquivo JSON">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M5 17v4h14v-4"></path></svg>
+          <span>Importar</span>
+        </button>
+        <input id="import-file" class="sr-only" type="file" accept="application/json,.json" aria-label="Selecionar arquivo JSON para importar">
+        <div class="user-menu">
+          <span class="user-avatar" aria-hidden="true">U</span>
+          <span id="user-name" class="user-identity"></span>
+          <button id="logout-button" class="button button-quiet logout-button" type="button" aria-label="Sair da conta local">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="board-heading" aria-labelledby="board-title">
+      <div>
+        <p class="eyebrow">SEU ESPAÇO DE TRABALHO</p>
+        <h1 id="board-title">Meu quadro</h1>
+        <p class="board-subtitle">Organize suas ideias e acompanhe cada etapa.</p>
+      </div>
+      <button id="add-column-button" class="button button-primary" type="button">
+        <span aria-hidden="true">＋</span> Nova coluna
+      </button>
+    </section>
+
+    <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+    <section id="board" class="board" aria-label="Quadro Kanban"></section>
+    </div>
+  </main>
+
+  <dialog id="card-dialog" class="card-dialog" aria-labelledby="dialog-title">
+    <form id="card-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">CARTÃO</p>
+          <h2 id="dialog-title">Novo cartão</h2>
+        </div>
+        <button id="close-dialog-button" class="icon-button" type="button" aria-label="Fechar janela">×</button>
+      </div>
+      <input id="card-id" type="hidden">
+      <input id="card-column" type="hidden">
+      <label class="form-field" for="card-title">Título <span aria-hidden="true">*</span>
+        <input id="card-title" name="title" type="text" maxlength="120" required placeholder="Ex.: Preparar apresentação">
+      </label>
+      <label class="form-field" for="card-description">Descrição <span class="optional">(opcional)</span>
+        <textarea id="card-description" name="description" rows="4" maxlength="1000" placeholder="Adicione mais detalhes..."></textarea>
+      </label>
+      <label class="form-field" for="card-priority">Prioridade
+        <select id="card-priority" name="priority">
+          <option value="baixa">Baixa</option>
+          <option value="media" selected>Média</option>
+          <option value="alta">Alta</option>
+        </select>
+      </label>
+      <div class="dialog-actions">
+        <button id="cancel-dialog-button" class="button button-quiet" type="button">Cancelar</button>
+        <button class="button button-primary" type="submit">Salvar cartão</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
